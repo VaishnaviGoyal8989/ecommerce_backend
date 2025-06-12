@@ -5,11 +5,11 @@ from app.utils.dependency import get_db
 from app.products.models import Product
 from app.products.schemas import ProductOut
 from typing import Literal, Optional
+import logging
 
+logger = logging.getLogger("ecommerce_logger")
 
 router = APIRouter(prefix="/products", tags=["Public - Products"])
-
-
 
 @router.get("/", response_model=list[ProductOut])
 def list_products(
@@ -21,6 +21,7 @@ def list_products(
     page_size: int = 10,
     db: Session = Depends(get_db)
 ):
+    logger.info("Fetching product list with filters")
     query = db.query(Product)
 
     if category:
@@ -43,6 +44,7 @@ def search_products(
     keyword: str = Query(..., min_length=1),
     db: Session = Depends(get_db)
 ):
+    logger.info(f"Searching products with keyword: {keyword}")
     keyword = keyword.lower()
     query = db.query(Product).filter(
         or_(
@@ -54,6 +56,7 @@ def search_products(
 
 @router.get("/{id}", response_model=ProductOut)
 def get_product_detail(id: int, db: Session = Depends(get_db)):
+    logger.info(f"Fetching product with ID: {id}")
     product = db.query(Product).filter_by(id=id).first()
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")

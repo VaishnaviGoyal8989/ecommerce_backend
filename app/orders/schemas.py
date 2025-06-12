@@ -1,8 +1,10 @@
 from pydantic import BaseModel
 from datetime import datetime
 
+
 class OrderItemOut(BaseModel):
     product_id: int
+    product_name: str  
     quantity: int
     price_at_purchase: float
 
