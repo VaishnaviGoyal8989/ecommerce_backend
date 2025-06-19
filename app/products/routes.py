@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.utils.dependency import get_db, require_admin 
 from app.products import schemas, models
+from app.orders.models import OrderItem
+
 import logging
 
 logger = logging.getLogger("ecommerce_logger")
@@ -88,6 +90,9 @@ def delete_product(id: int, db: Session = Depends(get_db), _ = Depends(require_a
         if not product:
             logger.warning(f"Product with ID {id} not found for deletion")
             raise HTTPException(status_code=404, detail="Product not found")
+        
+        db.query(OrderItem).filter_by(product_id=id).update({OrderItem.product_id: None})
+        
         db.delete(product)
         db.commit()
         logger.info(f"Product with ID {id} deleted")

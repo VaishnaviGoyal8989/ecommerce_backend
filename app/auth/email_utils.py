@@ -11,7 +11,7 @@ def send_reset_email(to_email: str, token: str):
     msg.set_content(f"""
 Hello,
 
-You requested to reset your password.
+You requested to reset your password.           
 
 Here is your secure token:
 {token}
