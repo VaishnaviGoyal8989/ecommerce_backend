@@ -53,27 +53,6 @@ def signin(data: schemas.Signin, db: Session = Depends(get_db)):
         logger.error(f"Signin error for {data.email}: {str(e)}")
         raise HTTPException(status_code=500, detail="Something went wrong during signin")
 
-@router.post("/refresh", response_model=schemas.Token)
-def refresh_token(data: schemas.RefreshTokenRequest):
-    try:
-        payload = jwt.decode(data.refresh_token, utils.SECRET_KEY, algorithms=[utils.ALGORITHM])
-        email = payload.get("sub")
-        if not email:
-            logger.warning("Refresh token missing subject")
-            raise HTTPException(status_code=401, detail="Invalid token")
-
-        access_token = utils.create_access_token(data={"sub": email})
-        new_refresh_token = utils.create_refresh_token(data={"sub": email})
-        logger.info(f"Refresh token success for {email}")
-        return {"access_token": access_token, "refresh_token": new_refresh_token}
-    
-    except JWTError:
-        logger.warning("Invalid refresh token")
-        raise HTTPException(status_code=401, detail="Invalid refresh token")
-    
-    except Exception as e:
-        logger.error(f"Token refresh error: {str(e)}")
-        raise HTTPException(status_code=500, detail="Something went wrong during token refresh")
 
 @router.post("/forgot-password")
 def forgot_password(data: schemas.ForgotPasswordRequest, db: Session = Depends(get_db)):

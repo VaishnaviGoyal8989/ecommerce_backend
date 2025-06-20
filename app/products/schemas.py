@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
 
 class ProductBase(BaseModel):
@@ -19,6 +19,7 @@ class ProductUpdate(BaseModel):
     stock: Optional[int] = Field(None, ge=0, description="enter valid stock")
     category: Optional[str] = None
     image_url: Optional[str] = None
+    model_config = ConfigDict(extra="forbid")
 
 class ProductOut(ProductBase):
     id: int

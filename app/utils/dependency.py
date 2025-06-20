@@ -20,6 +20,8 @@ def get_current_user(
 ):
     try:
         payload = jwt.decode(token.credentials, utils.SECRET_KEY, algorithms=[utils.ALGORITHM])
+        if payload.get("token_type") != "access":  
+            raise HTTPException(status_code=401, detail="Invalid token type")
         email = payload.get("sub")
         role = payload.get("role")
         user = db.query(models.User).filter_by(email=email).first()

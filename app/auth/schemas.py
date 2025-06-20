@@ -58,5 +58,3 @@ class ResetPasswordRequest(BaseModel):
             raise ValueError('Password must contain at least one special character')
         return v
 
-class RefreshTokenRequest(BaseModel):
-    refresh_token: str
